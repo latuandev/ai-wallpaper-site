@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django_filters",
     "rest_framework",
     "apps.common.apps.CommonConfig",
+    "apps.wallpapers.apps.WallpapersConfig",
 ]
 
 MIDDLEWARE = [
