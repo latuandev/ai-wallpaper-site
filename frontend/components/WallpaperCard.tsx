@@ -1,7 +1,18 @@
 import Image from 'next/image';
+import type { CSSProperties } from 'react';
+import type { Wallpaper } from '../data/wallpapers';
 
-export default function WallpaperCard({ wallpaper, displayAspectRatio = '16 / 9' }) {
-  const aspectStyle = { '--wallpaper-aspect': displayAspectRatio };
+interface WallpaperCardProps {
+  wallpaper: Wallpaper;
+  displayAspectRatio?: string;
+}
+
+interface WallpaperCardStyle extends CSSProperties {
+  '--wallpaper-aspect': string;
+}
+
+export default function WallpaperCard({ wallpaper, displayAspectRatio = '16 / 9' }: WallpaperCardProps) {
+  const aspectStyle: WallpaperCardStyle = { '--wallpaper-aspect': displayAspectRatio };
 
   return (
     <article className="card" style={aspectStyle}>

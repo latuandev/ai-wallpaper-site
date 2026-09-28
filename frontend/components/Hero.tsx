@@ -1,6 +1,11 @@
 import Image from 'next/image';
+import type { Wallpaper } from '../data/wallpapers';
 
-export default function Hero({ wallpaper }) {
+interface HeroProps {
+  wallpaper: Wallpaper;
+}
+
+export default function Hero({ wallpaper }: HeroProps) {
   return (
     <section className="hero shell" aria-labelledby="featured-wallpaper-title">
       <Image

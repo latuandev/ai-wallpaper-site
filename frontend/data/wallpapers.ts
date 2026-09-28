@@ -1,4 +1,27 @@
-export const featuredWallpaper = {
+export interface Wallpaper {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string;
+  category: string;
+  width: number;
+  height: number;
+  quality: string;
+  orientation: 'landscape' | 'portrait' | 'ultrawide';
+  aspectRatio: string;
+  imageUrl: string;
+}
+
+export interface WallpaperSection {
+  id: string;
+  icon: string;
+  title: string;
+  subtitle: string;
+  displayAspectRatio?: string;
+  items: Wallpaper[];
+}
+
+export const featuredWallpaper: Wallpaper = {
   id: 'cinematic-mountains',
   slug: 'cinematic-mountains',
   title: 'Cinematic Mountains',
@@ -12,7 +35,7 @@ export const featuredWallpaper = {
   imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=90',
 };
 
-export const sections = [
+export const sections: WallpaperSection[] = [
   {
     id: 'trending',
     icon: '🔥',
