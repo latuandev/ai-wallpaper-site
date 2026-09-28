@@ -1,13 +1,17 @@
 from io import StringIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.db import IntegrityError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.wallpapers.data.seed_data import WALLPAPER_SEED_DATA
 from apps.wallpapers.models import Category, Wallpaper
 from common.constants import Orientation
 
@@ -34,7 +38,7 @@ class WallpaperApiTests(APITestCase):
             orientation=Orientation.LANDSCAPE.value,
             aspect_ratio="16:9",
             quality="4K",
-            image_url="https://example.com/cinematic-mountains.jpg",
+            image="wallpapers/cinematic-mountains.jpg",
         )
         cls.city = Wallpaper.objects.create(
             title="Neon City",
@@ -46,7 +50,7 @@ class WallpaperApiTests(APITestCase):
             orientation=Orientation.PORTRAIT.value,
             aspect_ratio="9:16",
             quality="2K",
-            image_url="https://example.com/neon-city.jpg",
+            image="wallpapers/neon-city.jpg",
         )
 
     def test_list_returns_ok(self) -> None:
@@ -137,8 +141,9 @@ class WallpaperApiTests(APITestCase):
         self.assertEqual(response.data["aspectRatio"], "16:9")
         self.assertEqual(
             response.data["imageUrl"],
-            "https://example.com/cinematic-mountains.jpg",
+            "http://testserver/media/wallpapers/cinematic-mountains.jpg",
         )
+        self.assertNotIn("unsplash.com", response.data["imageUrl"])
         self.assertIn("createdAt", response.data)
         self.assertIn("updatedAt", response.data)
 
@@ -193,6 +198,19 @@ class WallpaperSeedCommandTests(TestCase):
     Verify deterministic and atomic demo wallpaper seeding.
     """
 
+    def setUp(self) -> None:
+        """
+        Isolate runtime media writes in a temporary directory.
+        """
+        super().setUp()
+        self.media_directory = TemporaryDirectory()
+        self.addCleanup(self.media_directory.cleanup)
+        self.media_settings = override_settings(
+            MEDIA_ROOT=self.media_directory.name,
+        )
+        self.media_settings.enable()
+        self.addCleanup(self.media_settings.disable)
+
     @staticmethod
     def run_seed() -> str:
         """
@@ -220,6 +238,20 @@ class WallpaperSeedCommandTests(TestCase):
         self.assertEqual(Wallpaper.objects.count(), 25)
         self.assertIn("wallpapers created: 25", output)
 
+    def test_first_run_stores_images_in_media_storage(self) -> None:
+        """
+        Copy seed source images into Django media storage.
+        """
+        self.run_seed()
+
+        wallpaper = Wallpaper.objects.get(slug="cinematic-mountains")
+        stored_image = Path(self.media_directory.name) / wallpaper.image.name
+        self.assertEqual(
+            wallpaper.image.name,
+            "wallpapers/cinematic-mountains.jpg",
+        )
+        self.assertTrue(stored_image.is_file())
+
     def test_second_run_does_not_duplicate_wallpapers(self) -> None:
         """
         Reuse wallpaper slugs on subsequent seed runs.
@@ -237,6 +269,28 @@ class WallpaperSeedCommandTests(TestCase):
         self.run_seed()
 
         self.assertEqual(Category.objects.count(), 10)
+
+    def test_second_run_does_not_duplicate_media_files(self) -> None:
+        """
+        Replace deterministic image names without creating suffixed copies.
+        """
+        media_root = Path(self.media_directory.name)
+        self.run_seed()
+        first_run_files = sorted(
+            path.relative_to(media_root)
+            for path in media_root.rglob("*")
+            if path.is_file()
+        )
+
+        self.run_seed()
+        second_run_files = sorted(
+            path.relative_to(media_root)
+            for path in media_root.rglob("*")
+            if path.is_file()
+        )
+
+        self.assertEqual(len(second_run_files), 25)
+        self.assertEqual(second_run_files, first_run_files)
 
     def test_existing_wallpaper_is_updated(self) -> None:
         """
@@ -280,11 +334,31 @@ class WallpaperSeedCommandTests(TestCase):
         self.assertEqual(wallpaper.quality, "4K")
         self.assertEqual(wallpaper.orientation, "landscape")
         self.assertEqual(wallpaper.aspect_ratio, "16:9")
-        self.assertEqual(
-            wallpaper.image_url,
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"
-            "?auto=format&fit=crop&w=1800&q=90",
+        self.assertEqual(wallpaper.image.name, "wallpapers/cinematic-mountains.jpg")
+
+    def test_missing_seed_image_fails_clearly(self) -> None:
+        """
+        Reject seed data that references a missing source image.
+        """
+        missing_image_data = (
+            {
+                **WALLPAPER_SEED_DATA[0],
+                "image_filename": "missing-image.jpg",
+            },
         )
+
+        with patch(
+            "apps.wallpapers.management.commands.seed_wallpapers.WALLPAPER_SEED_DATA",
+            missing_image_data,
+        ):
+            with self.assertRaisesMessage(
+                CommandError,
+                "Seed image file does not exist: missing-image.jpg.",
+            ):
+                self.run_seed()
+
+        self.assertFalse(Category.objects.exists())
+        self.assertFalse(Wallpaper.objects.exists())
 
     def test_failed_seed_rolls_back_all_changes(self) -> None:
         """
@@ -300,7 +374,7 @@ class WallpaperSeedCommandTests(TestCase):
                 "quality": "FHD",
                 "orientation": "landscape",
                 "aspect_ratio": "16:9",
-                "image_url": "https://example.com/rollback-valid.jpg",
+                "image_filename": "cinematic-mountains.jpg",
             },
             {
                 "slug": "rollback-invalid",
@@ -311,7 +385,7 @@ class WallpaperSeedCommandTests(TestCase):
                 "quality": "FHD",
                 "orientation": "landscape",
                 "aspect_ratio": "16:9",
-                "image_url": "https://example.com/rollback-invalid.jpg",
+                "image_filename": "sunset-peaks.jpg",
             },
         )
 

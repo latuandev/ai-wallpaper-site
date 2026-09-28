@@ -41,7 +41,7 @@ class Wallpaper(models.Model):
     orientation = models.CharField(max_length=9, choices=Orientation.choices())
     aspect_ratio = models.CharField(max_length=20)
     quality = models.CharField(max_length=20)
-    image_url = models.URLField(max_length=2048)
+    image = models.ImageField(upload_to="wallpapers/", max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

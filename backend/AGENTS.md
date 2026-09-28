@@ -79,6 +79,17 @@ Shared code belongs in `common/` only when it is genuinely reusable across multi
 
 Project-defined choice enums and constants are repository-wide exceptions and must follow the `Model choices` rules below.
 
+## Domain seed data
+
+- Domain-specific seed data belongs inside the owning app under `apps/<domain>/data/`.
+- Place seed datasets in focused modules such as `apps/<domain>/data/seed_data.py`.
+- Management commands should import seed data from the owning app's `data` package.
+- Do not place domain seed datasets in top-level `common/` or at the root of `apps/<domain>/` when a dedicated `data/` package is appropriate.
+- Image seed assets belong under `apps/<domain>/data/images/` as repository source data, not runtime media.
+- Management commands must copy seed assets through Django storage; runtime media must not be served from or stored under the domain `data` package.
+- Keep seed data deterministic and domain-owned.
+- Do not introduce runtime dependencies on frontend source files or cross-language parsing solely to load seed data.
+
 ## Domain exceptions
 
 Domain-specific exceptions that represent a domain contract, service failure, validation outcome, or deterministic catchable error must live in:

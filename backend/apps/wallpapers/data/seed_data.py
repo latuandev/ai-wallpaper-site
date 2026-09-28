@@ -15,7 +15,7 @@ class WallpaperSeedItem(TypedDict):
     quality: str
     orientation: str
     aspect_ratio: str
-    image_url: str
+    image_filename: str
 
 
 # This dataset mirrors frontend/data/wallpapers.ts for backend demo seeding.
@@ -33,10 +33,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"
-            "?auto=format&fit=crop&w=1800&q=90"
-        ),
+        "image_filename": "cinematic-mountains.jpg",
     },
     {
         "slug": "sunset-peaks",
@@ -47,10 +44,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "sunset-peaks.jpg",
     },
     {
         "slug": "neon-city",
@@ -61,10 +55,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "UWQHD",
         "orientation": "ultrawide",
         "aspect_ratio": "21:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1519608487953-e999c86e7455"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "neon-city.jpg",
     },
     {
         "slug": "autumn-forest",
@@ -75,10 +66,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "QHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1441974231531-c6227db76b6e"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "autumn-forest.jpg",
     },
     {
         "slug": "moonlit-lake",
@@ -89,10 +77,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "moonlit-lake.jpg",
     },
     {
         "slug": "astronaut-dreams",
@@ -103,10 +88,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "QHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1451187580459-43490279c0fa"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "astronaut-dreams.jpg",
     },
     {
         "slug": "ocean-cliff",
@@ -117,10 +99,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "FHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "ocean-cliff.jpg",
     },
     {
         "slug": "neon-panther",
@@ -131,10 +110,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "Mobile",
         "orientation": "portrait",
         "aspect_ratio": "9:20",
-        "image_url": (
-            "https://images.unsplash.com/photo-1518837695005-2083093ee35b"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "neon-panther.jpg",
     },
     {
         "slug": "abstract-flow",
@@ -145,10 +121,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "Mobile",
         "orientation": "portrait",
         "aspect_ratio": "9:20",
-        "image_url": (
-            "https://images.unsplash.com/photo-1557682250-33bd709cbe85"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "abstract-flow.jpg",
     },
     {
         "slug": "dark-blossom",
@@ -159,10 +132,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "Mobile",
         "orientation": "portrait",
         "aspect_ratio": "9:16",
-        "image_url": (
-            "https://images.unsplash.com/photo-1497250681960-ef046c08a56e"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "dark-blossom.jpg",
     },
     {
         "slug": "planet-rise",
@@ -173,10 +143,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "planet-rise.jpg",
     },
     {
         "slug": "neon-mask",
@@ -187,10 +154,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "Mobile",
         "orientation": "portrait",
         "aspect_ratio": "9:20",
-        "image_url": (
-            "https://images.unsplash.com/photo-1518709268805-4e9042af9f23"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "neon-mask.jpg",
     },
     {
         "slug": "subway-night",
@@ -201,10 +165,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "UWQHD",
         "orientation": "ultrawide",
         "aspect_ratio": "21:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1518005020951-eccb494ad742"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "subway-night.jpg",
     },
     {
         "slug": "sky-journey",
@@ -215,10 +176,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1500534623283-312aade485b7"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "sky-journey.jpg",
     },
     {
         "slug": "city-twilight",
@@ -229,10 +187,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "QHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1514565131-fce0801e5785"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "city-twilight.jpg",
     },
     {
         "slug": "samurai-path",
@@ -243,10 +198,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "FHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1493246507139-91e8fad9978e"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "samurai-path.jpg",
     },
     {
         "slug": "cherry-blossom",
@@ -257,10 +209,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "Mobile",
         "orientation": "portrait",
         "aspect_ratio": "9:20",
-        "image_url": (
-            "https://images.unsplash.com/photo-1522383225653-ed111181a951"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "cherry-blossom.jpg",
     },
     {
         "slug": "neon-girl",
@@ -271,10 +220,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "Mobile",
         "orientation": "portrait",
         "aspect_ratio": "9:16",
-        "image_url": (
-            "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "neon-girl.jpg",
     },
     {
         "slug": "dreamscape",
@@ -285,10 +231,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "UWQHD",
         "orientation": "ultrawide",
         "aspect_ratio": "21:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1511300636408-a63a89df3482"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "dreamscape.jpg",
     },
     {
         "slug": "monochrome-peaks",
@@ -299,10 +242,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1519681393784-d120267933ba"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "monochrome-peaks.jpg",
     },
     {
         "slug": "desert-dunes",
@@ -313,10 +253,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "QHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1509316785289-025f5b846b35"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "desert-dunes.jpg",
     },
     {
         "slug": "geometric-dark",
@@ -327,10 +264,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "UWQHD",
         "orientation": "ultrawide",
         "aspect_ratio": "21:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1519608487953-e999c86e7455"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "geometric-dark.jpg",
     },
     {
         "slug": "calm-ocean",
@@ -341,10 +275,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "4K",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "calm-ocean.jpg",
     },
     {
         "slug": "pastel-sky",
@@ -355,10 +286,7 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "FHD",
         "orientation": "landscape",
         "aspect_ratio": "16:9",
-        "image_url": (
-            "https://images.unsplash.com/photo-1499346030926-9a72daac6c63"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "pastel-sky.jpg",
     },
     {
         "slug": "minimal-curve",
@@ -369,9 +297,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
         "quality": "WQXGA",
         "orientation": "landscape",
         "aspect_ratio": "16:10",
-        "image_url": (
-            "https://images.unsplash.com/photo-1469474968028-56623f02e42e"
-            "?auto=format&fit=crop&w=1000&q=80"
-        ),
+        "image_filename": "minimal-curve.jpg",
     },
 )

@@ -1,9 +1,16 @@
+from pathlib import Path
+
+from django.core.files import File
+from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 from django.utils.text import slugify
 
+from apps.wallpapers.data.seed_data import WALLPAPER_SEED_DATA
 from apps.wallpapers.models import Category, Wallpaper
-from apps.wallpapers.seed_data import WALLPAPER_SEED_DATA
+
+
+SEED_IMAGE_DIR = Path(__file__).resolve().parents[2] / "data" / "images"
 
 
 class Command(BaseCommand):
@@ -23,9 +30,13 @@ class Command(BaseCommand):
         for wallpaper_data in WALLPAPER_SEED_DATA:
             category_name = wallpaper_data["category"]
             category_slug = slugify(category_name)
+            image_filename = wallpaper_data["image_filename"]
+            image_path = SEED_IMAGE_DIR / image_filename
             existing_name = category_names.get(category_slug)
             if existing_name is not None and existing_name != category_name:
                 raise CommandError("Category names produce the same slug.")
+            if not image_path.is_file():
+                raise CommandError(f"Seed image file does not exist: {image_filename}.")
             category_names[category_slug] = category_name
 
         categories: dict[str, Category] = {}
@@ -48,6 +59,28 @@ class Command(BaseCommand):
 
         for wallpaper_data in WALLPAPER_SEED_DATA:
             category_slug = slugify(wallpaper_data["category"])
+            image_filename = wallpaper_data["image_filename"]
+            image_path = SEED_IMAGE_DIR / image_filename
+            storage_name = f"wallpapers/{image_filename}"
+            existing_wallpaper = Wallpaper.objects.filter(
+                slug=wallpaper_data["slug"]
+            ).first()
+
+            if (
+                existing_wallpaper is not None
+                and existing_wallpaper.image.name
+                and existing_wallpaper.image.name != storage_name
+            ):
+                default_storage.delete(existing_wallpaper.image.name)
+            if default_storage.exists(storage_name):
+                default_storage.delete(storage_name)
+
+            with image_path.open("rb") as image_file:
+                stored_name = default_storage.save(
+                    storage_name,
+                    File(image_file, name=image_filename),
+                )
+
             _, created = Wallpaper.objects.update_or_create(
                 slug=wallpaper_data["slug"],
                 defaults={
@@ -59,7 +92,7 @@ class Command(BaseCommand):
                     "quality": wallpaper_data["quality"],
                     "orientation": wallpaper_data["orientation"],
                     "aspect_ratio": wallpaper_data["aspect_ratio"],
-                    "image_url": wallpaper_data["image_url"],
+                    "image": stored_name,
                 },
             )
             if created:
