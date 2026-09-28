@@ -1,16 +1,23 @@
-# AI Wallpaper Site
+# AI Wallpaper Site Frontend
 
-## Run with Docker Compose
+Next.js frontend for the wallpaper discovery and AI wallpaper generation experience.
+
+## Run with Docker
 
 ```bash
 docker compose up --build
 ```
 
-Open: http://localhost:3000
+Open http://localhost:3000.
 
-## Run locally
+## Routes
 
-```bash
-npm install
-npm run dev
-```
+- `/` — responsive wallpaper discovery homepage
+- `/generate` — UI entry point for the future AI wallpaper generator
+
+## Notes
+
+- Wallpaper data is currently mock data in `data/wallpapers.js`.
+- Remote demo images are loaded from Unsplash through `next/image`.
+- Next.js standalone output is enabled for a smaller production Docker image.
+- `.env` is intentionally not committed; copy `.env.example` when local environment variables are needed.
