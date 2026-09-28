@@ -12,7 +12,7 @@ class WallpaperSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(),
     )
     aspectRatio = serializers.CharField(source="aspect_ratio")
-    imageUrl = serializers.URLField(source="image_url")
+    imageUrl = serializers.ImageField(source="image", read_only=True)
     createdAt = serializers.DateTimeField(source="created_at", read_only=True)
     updatedAt = serializers.DateTimeField(source="updated_at", read_only=True)
 

@@ -13,7 +13,9 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=django:django . .
-RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh \
+    && mkdir -p /app/media \
+    && chown django:django /app/media
 
 USER django
 
