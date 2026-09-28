@@ -1,3 +1,9 @@
+from io import StringIO
+from unittest.mock import patch
+
+from django.core.management import call_command
+from django.db import IntegrityError
+from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -156,3 +162,165 @@ class WallpaperApiTests(APITestCase):
         self.assertIn("next", response.data)
         self.assertIn("previous", response.data)
         self.assertEqual(len(response.data["results"]), 2)
+
+    def test_write_methods_are_not_allowed(self) -> None:
+        """
+        Reject create, update, partial-update, and delete requests.
+        """
+        list_url = reverse("wallpaper-list")
+        detail_url = reverse(
+            "wallpaper-detail",
+            kwargs={"slug": self.mountains.slug},
+        )
+        requests = [
+            ("post", list_url),
+            ("put", detail_url),
+            ("patch", detail_url),
+            ("delete", detail_url),
+        ]
+
+        for method, url in requests:
+            with self.subTest(method=method):
+                response = getattr(self.client, method)(url, {}, format="json")
+                self.assertEqual(
+                    response.status_code,
+                    status.HTTP_405_METHOD_NOT_ALLOWED,
+                )
+
+
+class WallpaperSeedCommandTests(TestCase):
+    """
+    Verify deterministic and atomic demo wallpaper seeding.
+    """
+
+    @staticmethod
+    def run_seed() -> str:
+        """
+        Run the seed command and return its console output.
+        """
+        output = StringIO()
+        call_command("seed_wallpapers", stdout=output)
+        return output.getvalue()
+
+    def test_first_run_creates_expected_categories(self) -> None:
+        """
+        Create every category represented by the demo dataset.
+        """
+        output = self.run_seed()
+
+        self.assertEqual(Category.objects.count(), 10)
+        self.assertIn("Categories created: 10", output)
+
+    def test_first_run_creates_expected_wallpapers(self) -> None:
+        """
+        Create every wallpaper represented by the demo dataset.
+        """
+        output = self.run_seed()
+
+        self.assertEqual(Wallpaper.objects.count(), 25)
+        self.assertIn("wallpapers created: 25", output)
+
+    def test_second_run_does_not_duplicate_wallpapers(self) -> None:
+        """
+        Reuse wallpaper slugs on subsequent seed runs.
+        """
+        self.run_seed()
+        self.run_seed()
+
+        self.assertEqual(Wallpaper.objects.count(), 25)
+
+    def test_second_run_does_not_duplicate_categories(self) -> None:
+        """
+        Reuse category slugs on subsequent seed runs.
+        """
+        self.run_seed()
+        self.run_seed()
+
+        self.assertEqual(Category.objects.count(), 10)
+
+    def test_existing_wallpaper_is_updated(self) -> None:
+        """
+        Restore seeded values for an existing wallpaper slug.
+        """
+        self.run_seed()
+        wallpaper = Wallpaper.objects.get(slug="cinematic-mountains")
+        wallpaper.title = "Outdated title"
+        wallpaper.save(update_fields=["title"])
+
+        self.run_seed()
+
+        wallpaper.refresh_from_db()
+        self.assertEqual(wallpaper.title, "Cinematic Mountains")
+
+    def test_category_relationships_are_correct(self) -> None:
+        """
+        Associate each seeded wallpaper with its source category.
+        """
+        self.run_seed()
+
+        wallpaper = Wallpaper.objects.select_related("category").get(slug="neon-city")
+        self.assertEqual(wallpaper.category.name, "Cyberpunk")
+        self.assertEqual(wallpaper.category.slug, "cyberpunk")
+
+    def test_representative_metadata_matches_frontend_data(self) -> None:
+        """
+        Preserve factual metadata from the frontend demo source.
+        """
+        self.run_seed()
+
+        wallpaper = Wallpaper.objects.get(slug="cinematic-mountains")
+        self.assertEqual(wallpaper.title, "Cinematic Mountains")
+        self.assertEqual(
+            wallpaper.description,
+            "Breathtaking landscapes from around the world. "
+            "Let nature inspire your screen.",
+        )
+        self.assertEqual(wallpaper.width, 3840)
+        self.assertEqual(wallpaper.height, 2160)
+        self.assertEqual(wallpaper.quality, "4K")
+        self.assertEqual(wallpaper.orientation, "landscape")
+        self.assertEqual(wallpaper.aspect_ratio, "16:9")
+        self.assertEqual(
+            wallpaper.image_url,
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b"
+            "?auto=format&fit=crop&w=1800&q=90",
+        )
+
+    def test_failed_seed_rolls_back_all_changes(self) -> None:
+        """
+        Roll back prior upserts when a later seed record fails.
+        """
+        invalid_seed_data = (
+            {
+                "slug": "rollback-valid",
+                "title": "Rollback Valid",
+                "category": "Rollback One",
+                "width": 1920,
+                "height": 1080,
+                "quality": "FHD",
+                "orientation": "landscape",
+                "aspect_ratio": "16:9",
+                "image_url": "https://example.com/rollback-valid.jpg",
+            },
+            {
+                "slug": "rollback-invalid",
+                "title": "Rollback Invalid",
+                "category": "Rollback Two",
+                "width": 0,
+                "height": 1080,
+                "quality": "FHD",
+                "orientation": "landscape",
+                "aspect_ratio": "16:9",
+                "image_url": "https://example.com/rollback-invalid.jpg",
+            },
+        )
+
+        with patch(
+            "apps.wallpapers.management.commands.seed_wallpapers.WALLPAPER_SEED_DATA",
+            invalid_seed_data,
+        ):
+            with self.assertRaises(IntegrityError):
+                self.run_seed()
+
+        self.assertFalse(Category.objects.exists())
+        self.assertFalse(Wallpaper.objects.exists())

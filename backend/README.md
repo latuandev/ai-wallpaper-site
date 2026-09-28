@@ -21,5 +21,6 @@ Run Django commands inside the API container:
 ```bash
 docker compose exec api python manage.py check
 docker compose exec api python manage.py test
+docker compose exec api python manage.py seed_wallpapers
 docker compose exec api python manage.py createsuperuser
 ```
