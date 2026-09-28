@@ -3,8 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 # Normalize the lockfile in case it was created without registry access, then
 # install strictly from the resolved lockfile.
-RUN npm install --package-lock-only --ignore-scripts \
-  && npm ci
+RUN npm ci
 
 FROM node:22-alpine AS builder
 WORKDIR /app
