@@ -156,3 +156,27 @@ class WallpaperApiTests(APITestCase):
         self.assertIn("next", response.data)
         self.assertIn("previous", response.data)
         self.assertEqual(len(response.data["results"]), 2)
+
+    def test_write_methods_are_not_allowed(self) -> None:
+        """
+        Reject create, update, partial-update, and delete requests.
+        """
+        list_url = reverse("wallpaper-list")
+        detail_url = reverse(
+            "wallpaper-detail",
+            kwargs={"slug": self.mountains.slug},
+        )
+        requests = [
+            ("post", list_url),
+            ("put", detail_url),
+            ("patch", detail_url),
+            ("delete", detail_url),
+        ]
+
+        for method, url in requests:
+            with self.subTest(method=method):
+                response = getattr(self.client, method)(url, {}, format="json")
+                self.assertEqual(
+                    response.status_code,
+                    status.HTTP_405_METHOD_NOT_ALLOWED,
+                )

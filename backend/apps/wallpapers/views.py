@@ -9,11 +9,12 @@ from apps.wallpapers.serializers import WallpaperSerializer
 
 class WallpaperViewSet(ModelViewSet):
     """
-    Expose standard wallpaper resource operations using slug detail lookup.
+    Expose read-only wallpaper resources using slug detail lookup.
     """
 
     queryset = Wallpaper.objects.select_related("category").all()
     serializer_class = WallpaperSerializer
+    http_method_names = ["get", "head", "options"]
     lookup_field = "slug"
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = WallpaperFilter
