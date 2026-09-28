@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Generate Wallpaper | AI Wallpaper Site',
   description: 'Create a personalized wallpaper from a prompt.',
 };
@@ -19,7 +20,7 @@ export default function GeneratePage() {
 
           <form className="generatorForm">
             <label htmlFor="prompt">Describe your wallpaper</label>
-            <textarea id="prompt" name="prompt" rows="5" placeholder="A quiet futuristic city at night, neon reflections, cinematic, deep blue tones..." />
+            <textarea id="prompt" name="prompt" rows={5} placeholder="A quiet futuristic city at night, neon reflections, cinematic, deep blue tones..." />
 
             <div className="generatorGrid">
               <label>

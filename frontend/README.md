@@ -17,7 +17,7 @@ Open http://localhost:3000.
 
 ## Notes
 
-- Wallpaper data is currently mock data in `data/wallpapers.js`.
+- Wallpaper data is currently mock data in `data/wallpapers.ts`.
 - Remote demo images are loaded from Unsplash through `next/image`.
 - Next.js standalone output is enabled for a smaller production Docker image.
 - `.env` is intentionally not committed; copy `.env.example` when local environment variables are needed.

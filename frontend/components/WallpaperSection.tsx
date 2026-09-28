@@ -1,6 +1,11 @@
 import WallpaperCard from './WallpaperCard';
+import type { WallpaperSection as WallpaperSectionData } from '../data/wallpapers';
 
-export default function WallpaperSection({ section }) {
+interface WallpaperSectionProps {
+  section: WallpaperSectionData;
+}
+
+export default function WallpaperSection({ section }: WallpaperSectionProps) {
   const headingId = `${section.id}-heading`;
   const displayAspectRatio = section.displayAspectRatio || '16 / 9';
 
