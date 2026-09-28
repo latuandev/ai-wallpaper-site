@@ -7,7 +7,7 @@ This repository is an AI wallpaper website prototype.
 - `frontend/` is the active application.
 - `frontend/app/` uses the Next.js App Router.
 - `frontend/components/` contains reusable React components.
-- `frontend/data/wallpapers.js` contains the current in-repo wallpaper data model and mock content.
+- `frontend/data/wallpapers.ts` contains the current in-repo wallpaper data model and mock content.
 - `frontend/app/globals.css` contains the current site-wide styling and responsive rules.
 - `frontend/app/generate/` is the entry point for the AI wallpaper generation UI.
 - `backend/` is currently a placeholder. Do not invent a backend architecture unless the task explicitly asks for one.
@@ -29,10 +29,10 @@ The current stack is Next.js 15, React 19, plain CSS, `next/image`, and Docker/D
 
 - Prefer Server Components by default.
 - Add `'use client'` only where browser state, effects, event-driven interactivity, or browser-only APIs require it.
-- Keep route-level UI in `frontend/app/**/page.js` and reusable UI in `frontend/components/`.
-- Keep the project in JavaScript unless the user explicitly asks for a TypeScript migration.
+- Keep route-level UI in `frontend/app/**/page.tsx` and reusable UI in `frontend/components/`.
+- The application source is TypeScript-first. Do not introduce `.js`, `.jsx`, or `.mjs` application source files.
 - Use `next/link` for internal route navigation.
-- Use `next/image` for wallpaper and hero imagery. If a new remote image host is introduced, update `frontend/next.config.mjs` intentionally.
+- Use `next/image` for wallpaper and hero imagery. If a new remote image host is introduced, update `frontend/next.config.ts` intentionally.
 - Keep global styling in `frontend/app/globals.css` unless a feature clearly benefits from another structure. Do not reformat the whole stylesheet for a local change.
 
 ## TypeScript

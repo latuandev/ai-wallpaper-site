@@ -11,11 +11,11 @@ Implement the requested feature using the existing Next.js App Router architectu
 
 Read only the files needed for the task. Typical locations are:
 
-- `frontend/app/<route>/page.js` for route UI.
+- `frontend/app/<route>/page.tsx` for route UI.
 - `frontend/components/` for reusable components.
-- `frontend/data/wallpapers.js` for the current mock wallpaper source.
+- `frontend/data/wallpapers.ts` for the current mock wallpaper source.
 - `frontend/app/globals.css` for styling.
-- `frontend/next.config.mjs` only when Next.js configuration must change.
+- `frontend/next.config.ts` only when Next.js configuration must change.
 
 Do not refactor unrelated prototype behavior while implementing the feature.
 
