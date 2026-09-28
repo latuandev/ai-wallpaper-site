@@ -9,7 +9,7 @@ Validate what changed; do not turn verification into an unrelated cleanup task.
 
 ## Baseline checks
 
-For frontend JavaScript/CSS/runtime changes:
+For frontend TypeScript/CSS/runtime changes:
 
 ```bash
 cd frontend

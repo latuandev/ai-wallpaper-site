@@ -28,7 +28,7 @@ Do not replace source dimensions with fake values to make the row look uniform.
 - Use useful `alt` text based on the wallpaper title/category.
 - Provide a realistic `sizes` value for responsive cards.
 - Use `priority` only for genuinely above-the-fold critical imagery such as the featured hero.
-- Add a remote image hostname to `next.config.mjs` only when necessary.
+- Add a remote image hostname to `next.config.ts` only when necessary.
 
 ## Layout behavior
 
