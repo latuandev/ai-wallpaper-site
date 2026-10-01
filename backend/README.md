@@ -14,9 +14,12 @@ The backend is available at <http://localhost:8000>, and Django admin is at
 
 The API container applies database migrations before starting Gunicorn.
 
-Demo seed images are stored in `apps/wallpapers/data/images/`. The
-`seed_wallpapers` command copies them into Django media storage, served under
-`/media/` for local development.
+Demo seed source images must be supplied manually under
+`apps/wallpapers/data/images/` before running `python manage.py seed_wallpapers`.
+This directory is gitignored, and filenames must match the `image_filename`
+values in `apps/wallpapers/data/seed_data.py`. The command copies these source
+files into Django media storage, served under `/media/` for local development;
+the seed source directory itself is not served as runtime media.
 
 ## Management commands
 
