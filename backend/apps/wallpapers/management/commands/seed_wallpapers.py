@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 from django.core.files import File
@@ -12,6 +13,25 @@ from apps.wallpapers.models import Category, Wallpaper
 
 
 SEED_IMAGE_DIR = Path(__file__).resolve().parents[2] / "data" / "images"
+
+
+def derive_wallpaper_title(image_filename: str) -> str:
+    """
+    Validate a seed image filename and derive its wallpaper title.
+
+    Raises:
+        CommandError: If the filename is not lowercase kebab-case with an extension.
+    """
+    if (
+        re.fullmatch(
+            r"[a-z0-9]+(?:-[a-z0-9]+)*\.[a-z0-9]+",
+            image_filename,
+        )
+        is None
+    ):
+        raise CommandError(f"Invalid seed image filename: {image_filename}.")
+
+    return " ".join(word.capitalize() for word in Path(image_filename).stem.split("-"))
 
 
 class Command(BaseCommand):
@@ -75,11 +95,13 @@ class Command(BaseCommand):
         Upsert every demo category and wallpaper in one transaction.
         """
         category_names: dict[str, str] = {}
+        titles_by_filename: dict[str, str] = {}
 
         for wallpaper_data in WALLPAPER_SEED_DATA:
             category_name = wallpaper_data["category"]
             category_slug = slugify(category_name)
             image_filename = wallpaper_data["image_filename"]
+            titles_by_filename[image_filename] = derive_wallpaper_title(image_filename)
             image_path = SEED_IMAGE_DIR / image_filename
             existing_name = category_names.get(category_slug)
             if existing_name is not None and existing_name != category_name:
@@ -142,7 +164,7 @@ class Command(BaseCommand):
                 _, created = Wallpaper.objects.update_or_create(
                     slug=wallpaper_data["slug"],
                     defaults={
-                        "title": wallpaper_data["title"],
+                        "title": titles_by_filename[image_filename],
                         "description": wallpaper_data.get("description", ""),
                         "category": categories[category_slug],
                         "width": wallpaper_data["width"],
