@@ -7,7 +7,6 @@ class WallpaperSeedItem(TypedDict):
     """
 
     slug: str
-    title: str
     description: NotRequired[str]
     category: str
     width: int
@@ -22,7 +21,6 @@ class WallpaperSeedItem(TypedDict):
 WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     {
         "slug": "cinematic-mountains",
-        "title": "Cinematic Mountains",
         "description": (
             "Breathtaking landscapes from around the world. "
             "Let nature inspire your screen."
@@ -37,7 +35,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "sunset-peaks",
-        "title": "Sunset Peaks",
         "category": "Nature",
         "width": 3840,
         "height": 2160,
@@ -48,7 +45,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "neon-city",
-        "title": "Neon City",
         "category": "Cyberpunk",
         "width": 3440,
         "height": 1440,
@@ -59,7 +55,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "autumn-forest",
-        "title": "Autumn Forest",
         "category": "Nature",
         "width": 2560,
         "height": 1440,
@@ -70,7 +65,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "moonlit-lake",
-        "title": "Moonlit Lake",
         "category": "Night",
         "width": 3840,
         "height": 2160,
@@ -81,7 +75,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "astronaut-dreams",
-        "title": "Astronaut Dreams",
         "category": "Sci-Fi",
         "width": 2560,
         "height": 1440,
@@ -92,7 +85,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "ocean-cliff",
-        "title": "Ocean Cliff",
         "category": "Nature",
         "width": 1920,
         "height": 1080,
@@ -103,7 +95,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "neon-panther",
-        "title": "Neon Panther",
         "category": "AMOLED",
         "width": 1080,
         "height": 2400,
@@ -114,7 +105,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "abstract-flow",
-        "title": "Abstract Flow",
         "category": "Abstract",
         "width": 1440,
         "height": 3200,
@@ -125,7 +115,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "dark-blossom",
-        "title": "Dark Blossom",
         "category": "AMOLED",
         "width": 1080,
         "height": 1920,
@@ -136,7 +125,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "planet-rise",
-        "title": "Planet Rise",
         "category": "Space",
         "width": 3840,
         "height": 2160,
@@ -147,7 +135,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "neon-mask",
-        "title": "Neon Mask",
         "category": "Cyberpunk",
         "width": 1080,
         "height": 2400,
@@ -158,7 +145,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "subway-night",
-        "title": "Subway Night",
         "category": "City",
         "width": 3440,
         "height": 1440,
@@ -169,7 +155,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "sky-journey",
-        "title": "Sky Journey",
         "category": "Anime",
         "width": 3840,
         "height": 2160,
@@ -180,7 +165,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "city-twilight",
-        "title": "City Twilight",
         "category": "Anime",
         "width": 2560,
         "height": 1440,
@@ -191,7 +175,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "samurai-path",
-        "title": "Samurai Path",
         "category": "Anime",
         "width": 1920,
         "height": 1080,
@@ -202,7 +185,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "cherry-blossom",
-        "title": "Cherry Blossom",
         "category": "Anime",
         "width": 1080,
         "height": 2400,
@@ -213,7 +195,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "neon-girl",
-        "title": "Neon Girl",
         "category": "Anime",
         "width": 1080,
         "height": 1920,
@@ -224,7 +205,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "dreamscape",
-        "title": "Dreamscape",
         "category": "Anime",
         "width": 3440,
         "height": 1440,
@@ -235,7 +215,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "monochrome-peaks",
-        "title": "Monochrome Peaks",
         "category": "Minimal",
         "width": 3840,
         "height": 2160,
@@ -246,7 +225,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "desert-dunes",
-        "title": "Desert Dunes",
         "category": "Minimal",
         "width": 2560,
         "height": 1440,
@@ -257,7 +235,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "geometric-dark",
-        "title": "Geometric Dark",
         "category": "Minimal",
         "width": 3440,
         "height": 1440,
@@ -268,7 +245,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "calm-ocean",
-        "title": "Calm Ocean",
         "category": "Minimal",
         "width": 3840,
         "height": 2160,
@@ -279,7 +255,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "pastel-sky",
-        "title": "Pastel Sky",
         "category": "Minimal",
         "width": 1920,
         "height": 1080,
@@ -290,7 +265,6 @@ WALLPAPER_SEED_DATA: tuple[WallpaperSeedItem, ...] = (
     },
     {
         "slug": "minimal-curve",
-        "title": "Minimal Curve",
         "category": "Minimal",
         "width": 2560,
         "height": 1600,

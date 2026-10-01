@@ -13,6 +13,9 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from apps.wallpapers.data.seed_data import WALLPAPER_SEED_DATA
+from apps.wallpapers.management.commands.seed_wallpapers import (
+    derive_wallpaper_title,
+)
 from apps.wallpapers.models import Category, Wallpaper
 from common.constants import Orientation
 
@@ -206,17 +209,14 @@ class WallpaperSeedCommandTests(TestCase):
         super().setUp()
         self.seed_image_directory = TemporaryDirectory()
         self.addCleanup(self.seed_image_directory.cleanup)
-        seed_image_path = Path(self.seed_image_directory.name)
+        self.seed_image_path = Path(self.seed_image_directory.name)
         for image_filename in {
             wallpaper_data["image_filename"] for wallpaper_data in WALLPAPER_SEED_DATA
         }:
-            Image.new("RGB", (1, 1), color="white").save(
-                seed_image_path / image_filename,
-                format="JPEG",
-            )
+            self.create_seed_image(image_filename)
         self.seed_image_patch = patch(
             "apps.wallpapers.management.commands.seed_wallpapers.SEED_IMAGE_DIR",
-            seed_image_path,
+            self.seed_image_path,
         )
         self.seed_image_patch.start()
         self.addCleanup(self.seed_image_patch.stop)
@@ -228,6 +228,16 @@ class WallpaperSeedCommandTests(TestCase):
         )
         self.media_settings.enable()
         self.addCleanup(self.media_settings.disable)
+
+    def create_seed_image(self, image_filename: str) -> None:
+        """
+        Create a valid temporary image for a seed filename.
+        """
+        image_format = "PNG" if Path(image_filename).suffix == ".png" else "JPEG"
+        Image.new("RGB", (1, 1), color="white").save(
+            self.seed_image_path / image_filename,
+            format=image_format,
+        )
 
     @staticmethod
     def run_seed() -> str:
@@ -269,6 +279,43 @@ class WallpaperSeedCommandTests(TestCase):
             "wallpapers/cinematic-mountains.jpg",
         )
         self.assertTrue(stored_image.is_file())
+
+    def test_title_is_derived_from_image_filename(self) -> None:
+        """
+        Convert lowercase kebab-case image stems into wallpaper titles.
+        """
+        self.assertEqual(derive_wallpaper_title("fly-bird.png"), "Fly Bird")
+        self.assertEqual(
+            derive_wallpaper_title("cinematic-mountains.jpg"),
+            "Cinematic Mountains",
+        )
+        self.assertEqual(
+            derive_wallpaper_title("city-night-4k.webp"),
+            "City Night 4k",
+        )
+
+    def test_seed_stores_filename_derived_title(self) -> None:
+        """
+        Persist a title derived from the seed image filename.
+        """
+        image_filename = "fly-bird.png"
+        self.create_seed_image(image_filename)
+        seed_data = (
+            {
+                **WALLPAPER_SEED_DATA[0],
+                "slug": "fly-bird",
+                "image_filename": image_filename,
+            },
+        )
+
+        with patch(
+            "apps.wallpapers.management.commands.seed_wallpapers.WALLPAPER_SEED_DATA",
+            seed_data,
+        ):
+            self.run_seed()
+
+        wallpaper = Wallpaper.objects.get(slug="fly-bird")
+        self.assertEqual(wallpaper.title, "Fly Bird")
 
     def test_second_run_does_not_duplicate_wallpapers(self) -> None:
         """
@@ -312,7 +359,7 @@ class WallpaperSeedCommandTests(TestCase):
 
     def test_existing_wallpaper_is_updated(self) -> None:
         """
-        Restore seeded values for an existing wallpaper slug.
+        Restore the filename-derived title for an existing wallpaper slug.
         """
         self.run_seed()
         wallpaper = Wallpaper.objects.get(slug="cinematic-mountains")
@@ -373,6 +420,44 @@ class WallpaperSeedCommandTests(TestCase):
         self.assertFalse(Category.objects.exists())
         self.assertFalse(Wallpaper.objects.exists())
 
+    def test_invalid_seed_image_filenames_fail_before_mutation(self) -> None:
+        """
+        Reject invalid filename forms without creating database or media state.
+        """
+        invalid_filenames = (
+            "Fly-Bird.png",
+            "fly_bird.png",
+            "fly bird.png",
+            "fly--bird.png",
+        )
+
+        for image_filename in invalid_filenames:
+            with self.subTest(image_filename=image_filename):
+                seed_data = (
+                    {
+                        **WALLPAPER_SEED_DATA[0],
+                        "image_filename": image_filename,
+                    },
+                )
+                with patch(
+                    "apps.wallpapers.management.commands.seed_wallpapers.WALLPAPER_SEED_DATA",
+                    seed_data,
+                ):
+                    with self.assertRaisesMessage(
+                        CommandError,
+                        f"Invalid seed image filename: {image_filename}.",
+                    ):
+                        self.run_seed()
+
+                self.assertFalse(Category.objects.exists())
+                self.assertFalse(Wallpaper.objects.exists())
+                self.assertFalse(
+                    any(
+                        path.is_file()
+                        for path in Path(self.media_directory.name).rglob("*")
+                    )
+                )
+
     def test_failed_seed_rolls_back_all_changes(self) -> None:
         """
         Roll back database upserts and remove new media after failure.
@@ -380,7 +465,6 @@ class WallpaperSeedCommandTests(TestCase):
         invalid_seed_data = (
             {
                 "slug": "rollback-valid",
-                "title": "Rollback Valid",
                 "category": "Rollback One",
                 "width": 1920,
                 "height": 1080,
@@ -391,7 +475,6 @@ class WallpaperSeedCommandTests(TestCase):
             },
             {
                 "slug": "rollback-invalid",
-                "title": "Rollback Invalid",
                 "category": "Rollback Two",
                 "width": 0,
                 "height": 1080,
