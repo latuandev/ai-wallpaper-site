@@ -13,6 +13,10 @@ services:
     networks:
       - wallpaper
     restart: unless-stopped
+    cpus: ${API_CPUS:-0.75}
+    mem_limit: ${API_MEM_LIMIT:-1024m}
+    mem_reservation: ${API_MEM_RESERVATION:-384m}
+    pids_limit: ${API_PIDS:-256}
 
 networks:
   wallpaper:

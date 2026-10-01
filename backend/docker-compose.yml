@@ -24,6 +24,10 @@ services:
       - default
       - wallpaper
     restart: unless-stopped
+    cpus: ${API_CPUS:-1.5}
+    mem_limit: ${API_MEM_LIMIT:-1536m}
+    mem_reservation: ${API_MEM_RESERVATION:-512m}
+    pids_limit: ${API_PIDS:-256}
 
   db:
     image: postgres:17-alpine
@@ -35,10 +39,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    cpus: ${DB_CPUS:-1.25}
+    mem_limit: ${DB_MEM_LIMIT:-2560m}
+    mem_reservation: ${DB_MEM_RESERVATION:-1024m}
+    pids_limit: ${DB_PIDS:-256}
 
 volumes:
   postgres_data:
