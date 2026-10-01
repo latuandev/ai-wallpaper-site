@@ -362,7 +362,7 @@ class WallpaperSeedCommandTests(TestCase):
 
     def test_failed_seed_rolls_back_all_changes(self) -> None:
         """
-        Roll back prior upserts when a later seed record fails.
+        Roll back database upserts and remove new media after failure.
         """
         invalid_seed_data = (
             {
@@ -398,3 +398,37 @@ class WallpaperSeedCommandTests(TestCase):
 
         self.assertFalse(Category.objects.exists())
         self.assertFalse(Wallpaper.objects.exists())
+        self.assertFalse(
+            any(path.is_file() for path in Path(self.media_directory.name).rglob("*"))
+        )
+
+    def test_failed_reseed_restores_existing_media(self) -> None:
+        """
+        Restore pre-run media content when a reseed fails.
+        """
+        self.run_seed()
+        existing_image = (
+            Path(self.media_directory.name) / "wallpapers" / "cinematic-mountains.jpg"
+        )
+        previous_content = b"Previously valid runtime image."
+        existing_image.write_bytes(previous_content)
+        invalid_seed_data = (
+            {
+                **WALLPAPER_SEED_DATA[0],
+            },
+            {
+                **WALLPAPER_SEED_DATA[1],
+                "width": 0,
+            },
+        )
+
+        with patch(
+            "apps.wallpapers.management.commands.seed_wallpapers.WALLPAPER_SEED_DATA",
+            invalid_seed_data,
+        ):
+            with self.assertRaises(IntegrityError):
+                self.run_seed()
+
+        self.assertEqual(Category.objects.count(), 10)
+        self.assertEqual(Wallpaper.objects.count(), 25)
+        self.assertEqual(existing_image.read_bytes(), previous_content)
