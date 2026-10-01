@@ -7,7 +7,9 @@ These instructions apply to work under `frontend/`.
 - `frontend/` is the Next.js application.
 - `frontend/app/` uses the Next.js App Router.
 - `frontend/components/` contains reusable React components.
-- `frontend/data/wallpapers.ts` contains the current in-repo wallpaper data model and mock content.
+- `frontend/data/wallpapers.ts` contains wallpaper TypeScript types and homepage
+  presentation metadata such as curated section definitions. Wallpaper records
+  are loaded from the backend API and must not be duplicated here.
 - `frontend/app/globals.css` contains the current site-wide styling and responsive rules.
 - `frontend/app/generate/` is the entry point for the AI wallpaper generation UI.
 The frontend stack is Next.js 15, React 19, TypeScript, plain CSS, `next/image`, and Docker/Docker Compose.
