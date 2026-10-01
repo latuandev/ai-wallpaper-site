@@ -5,7 +5,7 @@ services:
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-django-insecure-local-development-only}
       DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
-      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1},api
       POSTGRES_DB: ${POSTGRES_DB:-wallpapers}
       POSTGRES_USER: ${POSTGRES_USER:-wallpapers}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wallpapers}
@@ -20,6 +20,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - default
+      - wallpaper
     restart: unless-stopped
 
   db:
@@ -40,3 +43,7 @@ services:
 volumes:
   postgres_data:
   media_data:
+
+networks:
+  wallpaper:
+    name: ai_wallpaper_network
