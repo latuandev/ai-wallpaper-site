@@ -157,3 +157,11 @@ export async function getWallpaperBySlug(
     imageUrl: normalizeImageUrl(payload.imageUrl, backendUrls.browser),
   };
 }
+
+export function getWallpaperDownloadUrl(slug: string): string {
+  const backendUrls = getBackendUrls();
+  return new URL(
+    `/api/wallpapers/${encodeURIComponent(slug)}/download/`,
+    backendUrls.browser,
+  ).toString();
+}

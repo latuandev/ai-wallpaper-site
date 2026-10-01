@@ -8,6 +8,7 @@ import WallpaperCard from '../../../components/WallpaperCard';
 import type { Wallpaper } from '../../../data/wallpapers';
 import {
   getWallpaperBySlug,
+  getWallpaperDownloadUrl,
   getWallpapers,
 } from '../../../lib/wallpapers';
 
@@ -105,6 +106,7 @@ export default async function WallpaperDetailPage({
   }
 
   const orientation = formatOrientation(wallpaper.orientation);
+  const downloadUrl = getWallpaperDownloadUrl(wallpaper.slug);
   const information = [
     ['Category', wallpaper.category],
     ['Quality', wallpaper.quality],
@@ -128,7 +130,7 @@ export default async function WallpaperDetailPage({
         </nav>
 
         <section
-          className="wallpaperDetail"
+          className={`wallpaperDetail wallpaperDetail--${wallpaper.orientation}`}
           aria-labelledby="wallpaper-detail-title"
         >
           <div className={`detailPreview detailPreview--${wallpaper.orientation}`}>
@@ -158,8 +160,7 @@ export default async function WallpaperDetailPage({
             <div className="detailActions">
               <a
                 className="detailDownload"
-                href={wallpaper.imageUrl}
-                download
+                href={downloadUrl}
               >
                 <span aria-hidden="true">⇩</span> Download Wallpaper
               </a>
