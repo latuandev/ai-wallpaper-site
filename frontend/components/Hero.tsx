@@ -14,12 +14,13 @@ export default function Hero({ wallpaper }: HeroProps) {
         alt={`${wallpaper.title} wallpaper preview`}
         fill
         priority
+        unoptimized
         sizes="(max-width: 720px) calc(100vw - 20px), (max-width: 1440px) calc(100vw - 40px), 1440px"
       />
       <div className="heroShade" aria-hidden="true" />
       <div className="heroOverlay">
         <small>FEATURED COLLECTION</small>
-        <h1 id="featured-wallpaper-title">Cinematic<br />Mountains</h1>
+        <h1 id="featured-wallpaper-title">{wallpaper.title}</h1>
         <p>{wallpaper.description}</p>
         <div className="meta">{wallpaper.width} × {wallpaper.height} · {wallpaper.category} · {wallpaper.quality}</div>
         <div className="heroButtons">

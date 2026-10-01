@@ -21,6 +21,7 @@ export default function WallpaperCard({ wallpaper, displayAspectRatio = '16 / 9'
           src={wallpaper.imageUrl}
           alt={`${wallpaper.title} ${wallpaper.category} wallpaper`}
           fill
+          unoptimized
           sizes="(max-width: 420px) 62vw, (max-width: 720px) 56vw, (max-width: 1100px) 33vw, 16vw"
         />
         <button
