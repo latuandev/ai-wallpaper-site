@@ -16,6 +16,7 @@ services:
       - "${API_PORT:-8000}:8000"
     volumes:
       - media_data:/app/media
+      - ./apps/wallpapers/data/images:/app/apps/wallpapers/data/images:ro
     depends_on:
       db:
         condition: service_healthy

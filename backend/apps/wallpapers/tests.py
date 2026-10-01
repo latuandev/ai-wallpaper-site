@@ -8,6 +8,7 @@ from django.core.management.base import CommandError
 from django.db import IntegrityError
 from django.test import TestCase, override_settings
 from django.urls import reverse
+from PIL import Image
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -200,9 +201,26 @@ class WallpaperSeedCommandTests(TestCase):
 
     def setUp(self) -> None:
         """
-        Isolate runtime media writes in a temporary directory.
+        Isolate seed sources and runtime media in temporary directories.
         """
         super().setUp()
+        self.seed_image_directory = TemporaryDirectory()
+        self.addCleanup(self.seed_image_directory.cleanup)
+        seed_image_path = Path(self.seed_image_directory.name)
+        for image_filename in {
+            wallpaper_data["image_filename"] for wallpaper_data in WALLPAPER_SEED_DATA
+        }:
+            Image.new("RGB", (1, 1), color="white").save(
+                seed_image_path / image_filename,
+                format="JPEG",
+            )
+        self.seed_image_patch = patch(
+            "apps.wallpapers.management.commands.seed_wallpapers.SEED_IMAGE_DIR",
+            seed_image_path,
+        )
+        self.seed_image_patch.start()
+        self.addCleanup(self.seed_image_patch.stop)
+
         self.media_directory = TemporaryDirectory()
         self.addCleanup(self.media_directory.cleanup)
         self.media_settings = override_settings(
@@ -340,22 +358,17 @@ class WallpaperSeedCommandTests(TestCase):
         """
         Reject seed data that references a missing source image.
         """
-        missing_image_data = (
-            {
-                **WALLPAPER_SEED_DATA[0],
-                "image_filename": "missing-image.jpg",
-            },
+        missing_image_filename = WALLPAPER_SEED_DATA[0]["image_filename"]
+        missing_image_path = (
+            Path(self.seed_image_directory.name) / missing_image_filename
         )
+        missing_image_path.unlink()
 
-        with patch(
-            "apps.wallpapers.management.commands.seed_wallpapers.WALLPAPER_SEED_DATA",
-            missing_image_data,
+        with self.assertRaisesMessage(
+            CommandError,
+            f"Seed image file does not exist: {missing_image_filename}.",
         ):
-            with self.assertRaisesMessage(
-                CommandError,
-                "Seed image file does not exist: missing-image.jpg.",
-            ):
-                self.run_seed()
+            self.run_seed()
 
         self.assertFalse(Category.objects.exists())
         self.assertFalse(Wallpaper.objects.exists())
