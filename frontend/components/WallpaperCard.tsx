@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import type { CSSProperties } from 'react';
 import type { Wallpaper } from '../data/wallpapers';
 
@@ -16,6 +17,11 @@ export default function WallpaperCard({ wallpaper, displayAspectRatio = '16 / 9'
 
   return (
     <article className="card" style={aspectStyle}>
+      <Link
+        className="cardLink"
+        href={`/wallpapers/${wallpaper.slug}`}
+        aria-label={`View ${wallpaper.title} wallpaper`}
+      />
       <div className="thumb">
         <Image
           src={wallpaper.imageUrl}
