@@ -18,6 +18,7 @@ from apps.wallpapers.management.commands.seed_wallpapers import (
 )
 from apps.wallpapers.models import Category, Wallpaper
 from common.constants import Orientation
+from common.messages import MESSAGES
 
 
 class WallpaperApiTests(APITestCase):
@@ -56,6 +57,27 @@ class WallpaperApiTests(APITestCase):
             quality="2K",
             image="wallpapers/neon-city.jpg",
         )
+
+    def setUp(self) -> None:
+        """
+        Isolate API media files in a temporary directory.
+        """
+        super().setUp()
+        self.media_directory = TemporaryDirectory()
+        self.addCleanup(self.media_directory.cleanup)
+        self.media_settings = override_settings(MEDIA_ROOT=self.media_directory.name)
+        self.media_settings.enable()
+        self.addCleanup(self.media_settings.disable)
+
+        self.download_image_path = (
+            Path(self.media_directory.name) / self.mountains.image.name
+        )
+        self.download_image_path.parent.mkdir(parents=True)
+        Image.new("RGB", (2, 2), color="white").save(
+            self.download_image_path,
+            format="JPEG",
+        )
+        self.download_image_content = self.download_image_path.read_bytes()
 
     def test_list_returns_ok(self) -> None:
         """
@@ -195,6 +217,62 @@ class WallpaperApiTests(APITestCase):
                     response.status_code,
                     status.HTTP_405_METHOD_NOT_ALLOWED,
                 )
+
+    def test_download_streams_image_as_attachment(self) -> None:
+        """
+        Stream the stored image with its deterministic filename and media type.
+        """
+        response = self.client.get(
+            reverse("wallpaper-download", kwargs={"slug": self.mountains.slug})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "image/jpeg")
+        self.assertIn("attachment", response["Content-Disposition"])
+        self.assertIn(
+            'filename="cinematic-mountains.jpg"',
+            response["Content-Disposition"],
+        )
+        self.assertEqual(
+            b"".join(response.streaming_content), self.download_image_content
+        )
+
+    def test_unknown_download_slug_returns_not_found(self) -> None:
+        """
+        Return not found when the download wallpaper slug is unknown.
+        """
+        response = self.client.get(
+            reverse("wallpaper-download", kwargs={"slug": "unknown"})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_missing_download_media_returns_safe_not_found(self) -> None:
+        """
+        Hide storage details when the persisted image file is unavailable.
+        """
+        self.download_image_path.unlink()
+
+        response = self.client.get(
+            reverse("wallpaper-download", kwargs={"slug": self.mountains.slug})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(
+            response.data["detail"],
+            MESSAGES["wallpapers"]["image_unavailable"],
+        )
+        self.assertNotIn(self.media_directory.name, response.content.decode())
+
+    def test_download_rejects_post(self) -> None:
+        """
+        Keep the download action GET-only.
+        """
+        response = self.client.post(
+            reverse("wallpaper-download", kwargs={"slug": self.mountains.slug})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class WallpaperSeedCommandTests(TestCase):
