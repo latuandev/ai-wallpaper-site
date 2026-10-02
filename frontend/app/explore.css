@@ -1,0 +1,265 @@
+.desktopNav a.active {
+  position: relative;
+  color: #e9d5ff;
+}
+
+.desktopNav a.active::after {
+  position: absolute;
+  right: 0;
+  bottom: -17px;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: #a855f7;
+  content: '';
+}
+
+.explorePage {
+  background:
+    radial-gradient(circle at 86% 4%, rgba(91, 33, 182, .22), transparent 28%),
+    radial-gradient(circle at 6% 56%, rgba(30, 64, 175, .1), transparent 24%),
+    #071019;
+}
+
+.exploreContent {
+  padding: 38px 0 64px;
+}
+
+.exploreIntro {
+  margin-bottom: 24px;
+}
+
+.exploreIntro h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2.25rem, 4vw, 3.8rem);
+  line-height: 1;
+  letter-spacing: -.035em;
+}
+
+.exploreIntro p {
+  margin: 0;
+  color: #aebbd0;
+  font-size: 1.05rem;
+}
+
+.filterToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #243247;
+  border-radius: 17px;
+  background: rgba(10, 19, 32, .8);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, .14);
+}
+
+.filterGroup {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.filterGroup button,
+.pagination button {
+  border: 1px solid #2a3950;
+  background: #111c2c;
+  color: #dbe4ee;
+  cursor: pointer;
+}
+
+.filterGroup button {
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 12px;
+}
+
+.filterGroup button.selected,
+.pagination button.selected {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #fff;
+}
+
+.filterSelect {
+  min-width: 190px;
+}
+
+.filterSelect select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #2a3950;
+  border-radius: 12px;
+  background: #111c2c;
+  color: #e2e8f0;
+  padding: 0 38px 0 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sortSelect {
+  width: 160px;
+  min-width: 160px;
+  margin-left: auto;
+}
+
+.filterGroup button:hover,
+.filterSelect select:hover,
+.pagination button:not(:disabled):hover {
+  border-color: #7656ad;
+  background-color: #17243a;
+}
+
+.filterGroup button:focus-visible,
+.filterSelect select:focus-visible,
+.pagination button:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 3px;
+}
+
+.exploreGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 18px 14px;
+}
+
+.exploreGrid .card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #243247;
+  border-radius: 14px;
+  background: rgba(13, 23, 37, .86);
+  scroll-snap-align: none;
+  transition: border-color .2s ease, transform .2s ease;
+}
+
+.exploreGrid .card:hover {
+  border-color: #42536c;
+  transform: translateY(-2px);
+}
+
+.card--explore .thumb {
+  border-radius: 13px 13px 0 0;
+}
+
+.card--explore .cardText {
+  gap: 8px;
+  padding: 11px 12px 12px;
+}
+
+.exploreCardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardText .categoryBadge {
+  flex: 0 0 auto;
+  max-width: 48%;
+  overflow: hidden;
+  padding: 5px 8px;
+  border: 1px solid rgba(168, 85, 247, .25);
+  border-radius: 999px;
+  background: rgba(126, 34, 206, .2);
+  color: #d8b4fe;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exploreEmpty {
+  display: grid;
+  min-height: 280px;
+  place-items: center;
+  border: 1px dashed #314158;
+  border-radius: 18px;
+  color: #94a3b8;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 30px;
+}
+
+.pagination button {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: .42;
+}
+
+@media (max-width: 1260px) {
+  .filterToolbar {
+    flex-wrap: wrap;
+  }
+
+  .sortSelect {
+    margin-left: 0;
+  }
+
+  .exploreGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .exploreContent {
+    padding-top: 26px;
+  }
+
+  .filterToolbar {
+    align-items: stretch;
+  }
+
+  .filterSelect,
+  .sortSelect {
+    width: calc(50% - 6px);
+    min-width: 0;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
+  .filterGroup button {
+    flex: 1 1 auto;
+    padding: 0 10px;
+  }
+
+  .exploreGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .exploreIntro p {
+    font-size: .95rem;
+  }
+
+  .filterSelect,
+  .sortSelect {
+    width: 100%;
+  }
+
+  .filterGroup {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .qualityFilters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .exploreGrid {
+    grid-template-columns: 1fr;
+  }
+}

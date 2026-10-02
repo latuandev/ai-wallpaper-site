@@ -6,17 +6,23 @@ import type { Wallpaper } from '../data/wallpapers';
 interface WallpaperCardProps {
   wallpaper: Wallpaper;
   displayAspectRatio?: string;
+  variant?: 'default' | 'explore';
 }
 
 interface WallpaperCardStyle extends CSSProperties {
   '--wallpaper-aspect': string;
 }
 
-export default function WallpaperCard({ wallpaper, displayAspectRatio = '16 / 9' }: WallpaperCardProps) {
+export default function WallpaperCard({
+  wallpaper,
+  displayAspectRatio = '16 / 9',
+  variant = 'default',
+}: WallpaperCardProps) {
   const aspectStyle: WallpaperCardStyle = { '--wallpaper-aspect': displayAspectRatio };
+  const className = variant === 'explore' ? 'card card--explore' : 'card';
 
   return (
-    <article className="card" style={aspectStyle}>
+    <article className={className} style={aspectStyle}>
       <Link
         className="cardLink"
         href={`/wallpapers/${wallpaper.slug}`}
@@ -41,7 +47,14 @@ export default function WallpaperCard({ wallpaper, displayAspectRatio = '16 / 9'
       </div>
       <div className="cardText">
         <strong>{wallpaper.title}</strong>
-        <span>{wallpaper.width} × {wallpaper.height} · {wallpaper.category}</span>
+        {variant === 'explore' ? (
+          <div className="exploreCardMeta">
+            <span>{wallpaper.width} × {wallpaper.height}</span>
+            <span className="categoryBadge">{wallpaper.category}</span>
+          </div>
+        ) : (
+          <span>{wallpaper.width} × {wallpaper.height} · {wallpaper.category}</span>
+        )}
       </div>
     </article>
   );
