@@ -1,12 +1,21 @@
 import Link from 'next/link';
 
-export default function Header() {
+interface HeaderProps {
+  activeItem?: 'explore';
+}
+
+export default function Header({ activeItem }: HeaderProps) {
   return (
     <header className="nav shell">
       <Link className="brand" href="/" aria-label="AI Wallpaper Site home">AI Wallpaper Site</Link>
       <nav className="desktopNav" aria-label="Primary navigation">
-        <a href="#trending">Explore</a>
-        <a href="#collections">Collections</a>
+        <Link
+          className={activeItem === 'explore' ? 'active' : undefined}
+          href="/explore"
+          aria-current={activeItem === 'explore' ? 'page' : undefined}
+        >
+          Explore
+        </Link>
         <a href="#categories">Categories</a>
         <Link className="generateLink" href="/generate">Generate ✨</Link>
       </nav>
